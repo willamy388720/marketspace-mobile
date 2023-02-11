@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import {
   Input as NativeBaseInput,
   IInputProps,
@@ -11,6 +11,7 @@ import { Eye, EyeSlash } from "phosphor-react-native";
 type Props = IInputProps & {
   isShowPassword?: boolean;
   errorMessage?: string | null;
+  InputRightComponent?: JSX.Element;
 };
 
 export function Input({
@@ -18,6 +19,7 @@ export function Input({
   errorMessage = null,
   isInvalid,
   type = "text",
+  InputRightComponent = <></>,
   ...rest
 }: Props) {
   const [showPassword, setShowPassword] = useState(isShowPassword);
@@ -58,7 +60,7 @@ export function Input({
               )}
             </Pressable>
           ) : (
-            <></>
+            InputRightComponent
           )
         }
       />

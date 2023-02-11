@@ -14,7 +14,7 @@ type TabRoutes = {
   signOut: undefined;
 };
 
-export type AppNavigatorRoutesProps = BottomTabNavigationProp<TabRoutes>;
+export type TabNavigatorRoutesProps = BottomTabNavigationProp<TabRoutes>;
 
 const { Navigator, Screen } = createBottomTabNavigator<TabRoutes>();
 
