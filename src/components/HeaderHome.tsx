@@ -9,7 +9,7 @@ export function HeaderHome() {
 
   return (
     <HStack mt={12} justifyContent="space-between">
-      <HStack justifyContent="center">
+      <HStack justifyContent="center" mr={12}>
         <UserPhoto size={12} mr={3} />
         <VStack>
           <Text fontSize="md" color="gray.100">
@@ -21,9 +21,9 @@ export function HeaderHome() {
         </VStack>
       </HStack>
       <Button
+        flexShrink={1}
         title="Criar anúncio"
         variant="secondary"
-        w={33}
         leftIcon={<Plus color={colors.gray[600]} size={sizes[4]} />}
       />
     </HStack>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FlatList, Text, VStack } from "native-base";
+import { FlatList, Text, VStack, Actionsheet, useDisclose } from "native-base";
 
 import { HeaderHome } from "@components/HeaderHome";
 import { MyAdsButton } from "@components/MyAdsButton";
@@ -7,6 +7,7 @@ import { Input } from "@components/Input";
 import { SearchAndFilter } from "@components/SearchAndFilter";
 import { AdsDTO } from "@dtos/AdsDTO";
 import { AdCard } from "@components/AdCard";
+import { FilterAds } from "@components/FilterAds";
 
 export function Home() {
   const [ads, setAds] = useState<AdsDTO[]>([
@@ -60,6 +61,8 @@ export function Home() {
     },
   ]);
 
+  const { isOpen, onOpen, onClose } = useDisclose();
+
   return (
     <VStack flex={1} px={6}>
       <HeaderHome />
@@ -70,6 +73,8 @@ export function Home() {
         <MyAdsButton />
       </VStack>
 
+      <FilterAds isOpen={isOpen} onClose={onClose} />
+
       <VStack mt={8} flex={1}>
         <Text fontSize="sm" color="gray.300" mb={3}>
           Compre produtos variados
@@ -77,7 +82,7 @@ export function Home() {
         <Input
           placeholder="Buscar anúncio"
           returnKeyType="search"
-          InputRightComponent={<SearchAndFilter />}
+          InputRightComponent={<SearchAndFilter onPress={onOpen} />}
         />
 
         <FlatList

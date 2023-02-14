@@ -5,6 +5,7 @@ import {
   Karla_700Bold,
 } from "@expo-google-fonts/karla";
 import { NativeBaseProvider } from "native-base";
+
 import { Loading } from "@components/Loading";
 import { theme } from "./src/theme";
 import { Routes } from "@routes/index";

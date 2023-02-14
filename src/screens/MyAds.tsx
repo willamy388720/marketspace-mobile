@@ -10,7 +10,6 @@ import {
   VStack,
 } from "native-base";
 import { Plus } from "phosphor-react-native";
-import { Dropdown } from "react-native-element-dropdown";
 
 import { AdsDTO } from "@dtos/AdsDTO";
 import { AdCard } from "@components/AdCard";
