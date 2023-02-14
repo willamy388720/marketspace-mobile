@@ -9,6 +9,8 @@ type Props = {
   title?: string | null;
   buttonRight?: () => JSX.Element | null;
   marginTop?: number;
+  marginBottom?: number;
+  paddingHorizontal?: number;
 };
 
 export function HeaderNavigation({
@@ -16,6 +18,8 @@ export function HeaderNavigation({
   title,
   buttonRight,
   marginTop = 12,
+  paddingHorizontal = 0,
+  marginBottom = 0,
 }: Props) {
   const { colors, sizes } = useTheme();
 
@@ -26,7 +30,13 @@ export function HeaderNavigation({
   }
 
   return (
-    <HStack mt={marginTop} justifyContent="space-between" alignItems="center">
+    <HStack
+      mt={marginTop}
+      px={paddingHorizontal}
+      mb={marginBottom}
+      justifyContent="space-between"
+      alignItems="center"
+    >
       {goBack ? (
         <TouchableOpacity onPress={handleGoBack}>
           <ArrowLeft color={colors.gray[100]} size={sizes[6]} />
