@@ -1,3 +1,5 @@
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { Heading, HStack, Text, useTheme, VStack } from "native-base";
 import { Plus } from "phosphor-react-native";
 
@@ -6,6 +8,12 @@ import { UserPhoto } from "./UserPhoto";
 
 export function HeaderHome() {
   const { colors, sizes } = useTheme();
+
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
+  function handleAddAdNavigate() {
+    navigation.navigate("formAd");
+  }
 
   return (
     <HStack mt={12} justifyContent="space-between">
@@ -25,6 +33,7 @@ export function HeaderHome() {
         title="Criar anúncio"
         variant="secondary"
         leftIcon={<Plus color={colors.gray[600]} size={sizes[4]} />}
+        onPress={handleAddAdNavigate}
       />
     </HStack>
   );

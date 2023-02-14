@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TouchableOpacity, Switch } from "react-native";
+import { TouchableOpacity } from "react-native";
 import {
   Actionsheet,
   Box,
@@ -8,9 +8,7 @@ import {
   HStack,
   IActionsheetProps,
   ScrollView,
-  Text,
   useTheme,
-  VStack,
 } from "native-base";
 import { Button } from "./Button";
 import { X } from "phosphor-react-native";

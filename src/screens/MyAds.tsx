@@ -16,6 +16,7 @@ import { AdCard } from "@components/AdCard";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { Select } from "@components/Select";
+import { HeaderNavigation } from "@components/HeaderNavigation";
 
 const data = [
   { label: "Todos", value: "Todos" },
@@ -85,15 +86,14 @@ export function MyAds() {
 
   return (
     <VStack flex={1} px={6}>
-      <HStack mt={12} justifyContent="space-between" alignItems="center">
-        <Box></Box>
-        <Heading fontFamily="heading" fontSize="lg" color="gray.100">
-          Meus anúncios
-        </Heading>
-        <TouchableOpacity onPress={handleAddAdNavigate}>
-          <Plus color={colors.gray[100]} size={sizes[6]} />
-        </TouchableOpacity>
-      </HStack>
+      <HeaderNavigation
+        title="Meus anúncios"
+        buttonRight={() => (
+          <TouchableOpacity onPress={handleAddAdNavigate}>
+            <Plus color={colors.gray[100]} size={sizes[6]} />
+          </TouchableOpacity>
+        )}
+      />
 
       <VStack mt={8} flex={1}>
         <HStack flex={1} justifyContent="space-between" alignItems="center">

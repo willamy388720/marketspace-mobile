@@ -31,7 +31,6 @@ export function Input({
   return (
     <FormControl>
       <NativeBaseInput
-        {...rest}
         bg="gray.700"
         borderWidth={0}
         color="gray.200"
@@ -63,6 +62,7 @@ export function Input({
             InputRightComponent
           )
         }
+        {...rest}
       />
     </FormControl>
   );
