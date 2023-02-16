@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FlatList, Text, VStack, Actionsheet, useDisclose } from "native-base";
+import { FlatList, Text, VStack, useDisclose } from "native-base";
 
 import { HeaderHome } from "@components/HeaderHome";
 import { MyAdsButton } from "@components/MyAdsButton";
@@ -60,7 +60,6 @@ export function Home() {
       price: "1200,00",
     },
   ]);
-
   const { isOpen, onOpen, onClose } = useDisclose();
 
   return (

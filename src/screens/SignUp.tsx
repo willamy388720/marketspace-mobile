@@ -1,14 +1,22 @@
+import { useState } from "react";
 import {
   Box,
   Heading,
   Button as NativeBaseButton,
   Image,
   ScrollView,
+  Skeleton,
   Text,
   VStack,
   useTheme,
+  useToast,
 } from "native-base";
 import { PencilSimpleLine } from "phosphor-react-native";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import * as yup from "yup";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import Logo from "@assets/Logo.png";
 import UserPhotoDefault from "@assets/userPhotoDefault.png";
@@ -18,14 +26,152 @@ import { Button } from "@components/Button";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 import { UserPhoto } from "@components/UserPhoto";
+import { AppError } from "@utils/AppError";
+import { api } from "@services/api";
+
+type FormDataProps = {
+  name: string;
+  email: string;
+  tel: string;
+  password: string;
+  confirm_password: string;
+};
+
+const signUpSchema = yup.object({
+  name: yup.string().required("Informe o seu nome"),
+  email: yup
+    .string()
+    .email("Informe um e-mail válido")
+    .required("Informe um e-mail"),
+  tel: yup.string().required("Informe um número de telefone"),
+  password: yup
+    .string()
+    .required("Informe a senha")
+    .min(6, "A senha deve ter no mínimo 6 caracteres"),
+  confirm_password: yup
+    .string()
+    .required("Informe a confirmação da senha")
+    .oneOf([yup.ref("password"), ""], "As senhas devem ser iguais"),
+});
 
 export function SignUp() {
+  const [userPhoto, setUserPhoto] = useState("");
+  const [userPhotoType, setUserPhotoType] = useState();
+  const [isLoadingUserPhoto, setIsLoadingUserPhoto] = useState(false);
+  const [isLoadingSignUp, setIsLoadingSignUp] = useState(false);
+
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
   const { colors, sizes } = useTheme();
 
+  const toast = useToast();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormDataProps>({
+    resolver: yupResolver(signUpSchema),
+  });
+
   function handleNavigateSignIn() {
     navigation.navigate("signIn");
+  }
+
+  async function handlePhotoSelect() {
+    try {
+      setIsLoadingUserPhoto(true);
+      const photoSelected = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        aspect: [4, 4],
+        allowsEditing: true,
+      });
+
+      if (photoSelected.canceled) {
+        return;
+      }
+
+      if (photoSelected.assets[0].uri) {
+        const photoInfo = await FileSystem.getInfoAsync(
+          photoSelected.assets[0].uri
+        );
+
+        if (photoInfo.size && photoInfo.size / 1024 / 1024 > 10) {
+          return toast.show({
+            title: "Essa imagem é muito grande! Escolha uma imagem menor.",
+            placement: "top",
+            bgColor: "red.500",
+          });
+        }
+      }
+
+      setUserPhoto(photoSelected.assets[0].uri);
+      setUserPhotoType(photoSelected.assets[0].type as any);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+
+      const title = isAppError
+        ? error.message
+        : "Não foi possível carregar a foto";
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.100",
+      });
+    } finally {
+      setIsLoadingUserPhoto(false);
+    }
+  }
+
+  async function handleSignUp({ name, email, tel, password }: FormDataProps) {
+    try {
+      setIsLoadingSignUp(true);
+
+      const userPhotoFileExtension = userPhoto.split(".").pop();
+
+      const photoFile = {
+        name: `${name}.${userPhotoFileExtension}`.toLowerCase(),
+        uri: userPhoto,
+        type: `${userPhotoType}/${userPhotoFileExtension}`,
+      } as any;
+
+      const userUploadForm = new FormData();
+
+      userUploadForm.append("avatar", photoFile);
+      userUploadForm.append("name", name);
+      userUploadForm.append("email", email);
+      userUploadForm.append("tel", tel);
+      userUploadForm.append("password", password);
+
+      await api.post("/users", userUploadForm, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.show({
+        title: "Conta criada com sucesso!",
+        placement: "top",
+        bgColor: "green.500",
+      });
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      console.log(error);
+
+      const title = isAppError
+        ? error.message
+        : "Não foi possível criar o usuário, por favor tente novamente.";
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.100",
+      });
+    } finally {
+      setIsLoadingSignUp(false);
+    }
   }
 
   return (
@@ -42,7 +188,21 @@ export function SignUp() {
       </VStack>
       <VStack justifyContent="center" alignItems="center" mt={8}>
         <Box>
-          <UserPhoto size={24} source={UserPhotoDefault} />
+          {isLoadingUserPhoto ? (
+            <Skeleton
+              w={24}
+              h={24}
+              rounded="full"
+              bg="gray.400"
+              borderWidth={3}
+              borderColor="blue.100"
+            />
+          ) : (
+            <UserPhoto
+              size={24}
+              source={userPhoto !== "" ? { uri: userPhoto } : UserPhotoDefault}
+            />
+          )}
           <NativeBaseButton
             position="absolute"
             right={0}
@@ -52,26 +212,95 @@ export function SignUp() {
             h={10}
             bg="blue.100"
             _pressed={{ bgColor: "blue.700" }}
+            onPress={handlePhotoSelect}
           >
             <PencilSimpleLine color={colors.gray[600]} size={sizes[4]} />
           </NativeBaseButton>
         </Box>
-        <Input placeholder="Nome" mt={4} />
-        <Input placeholder="Email" mt={4} />
-        <Input placeholder="Telefone" mt={4} />
-        <Input
-          placeholder="Senha"
-          mt={4}
-          isShowPassword={false}
-          type="password"
+
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Nome"
+              mt={4}
+              value={value}
+              onChangeText={onChange}
+              errorMessage={errors.name?.message}
+            />
+          )}
         />
-        <Input
-          placeholder="Confirmar senha"
-          mt={4}
-          isShowPassword={false}
-          type="password"
+
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Email"
+              mt={4}
+              autoCapitalize="none"
+              value={value}
+              onChangeText={onChange}
+              errorMessage={errors.email?.message}
+            />
+          )}
         />
-        <Button variant="secondary" mt={6} title="Criar" />
+
+        <Controller
+          control={control}
+          name="tel"
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Telefone"
+              mt={4}
+              value={value}
+              onChangeText={onChange}
+              keyboardType="phone-pad"
+              errorMessage={errors.tel?.message}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="password"
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Senha"
+              mt={4}
+              isShowPassword={false}
+              type="password"
+              value={value}
+              onChangeText={onChange}
+              errorMessage={errors.password?.message}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="confirm_password"
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="Confirmar senha"
+              mt={4}
+              isShowPassword={false}
+              type="password"
+              value={value}
+              onChangeText={onChange}
+              errorMessage={errors.confirm_password?.message}
+            />
+          )}
+        />
+
+        <Button
+          variant="secondary"
+          mt={6}
+          title="Criar"
+          onPress={handleSubmit(handleSignUp)}
+          isLoading={isLoadingSignUp}
+        />
       </VStack>
 
       <VStack alignItems="center" mt={12} mb={16}>

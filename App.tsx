@@ -9,6 +9,7 @@ import { NativeBaseProvider } from "native-base";
 import { Loading } from "@components/Loading";
 import { theme } from "./src/theme";
 import { Routes } from "@routes/index";
+import { AuthContexProvider } from "@contexts/AuthContext";
 
 export default function App() {
   const [fontLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
@@ -19,7 +20,9 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      {fontLoaded ? <Routes /> : <Loading />}
+      <AuthContexProvider>
+        {fontLoaded ? <Routes /> : <Loading />}
+      </AuthContexProvider>
     </NativeBaseProvider>
   );
 }

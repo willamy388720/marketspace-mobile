@@ -1,3 +1,4 @@
+import { useAuth } from "@hooks/useAuth";
 import {
   createBottomTabNavigator,
   BottomTabNavigationProp,
@@ -22,6 +23,12 @@ export function TabRoutes() {
   const { colors, sizes } = useTheme();
 
   const iconSize = sizes[6];
+
+  const { signOut } = useAuth();
+
+  async function handleSignOut() {
+    await signOut();
+  }
 
   return (
     <Navigator
@@ -74,7 +81,7 @@ export function TabRoutes() {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={() => console.log("Saindo")}
+              onPress={handleSignOut}
             >
               <SignOut color={colors.red[100]} size={iconSize} />
             </TouchableOpacity>

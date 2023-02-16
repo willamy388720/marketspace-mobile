@@ -5,6 +5,7 @@ import {
   Pressable,
   useTheme,
   FormControl,
+  Text,
 } from "native-base";
 import { Eye, EyeSlash } from "phosphor-react-native";
 
@@ -46,6 +47,11 @@ export function Input({
           borderWidth: 1,
           borderColor: "gray.300",
         }}
+        isInvalid={invalid}
+        _invalid={{
+          borderWidth: 1,
+          borderColor: "red.500",
+        }}
         InputRightElement={
           type === "password" ? (
             <Pressable
@@ -64,6 +70,11 @@ export function Input({
         }
         {...rest}
       />
+      {errorMessage && (
+        <Text color="red.500" fontSize="sm">
+          {errorMessage}
+        </Text>
+      )}
     </FormControl>
   );
 }
