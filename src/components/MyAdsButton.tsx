@@ -6,7 +6,11 @@ import { useNavigation } from "@react-navigation/native";
 
 import { TabNavigatorRoutesProps } from "@routes/tab.routes";
 
-export function MyAdsButton() {
+type Props = {
+  productsActivesCont: number;
+};
+
+export function MyAdsButton({ productsActivesCont }: Props) {
   const { colors, sizes } = useTheme();
 
   const navigation = useNavigation<TabNavigatorRoutesProps>();
@@ -27,7 +31,7 @@ export function MyAdsButton() {
         <Tag color={colors.blue[700]} size={sizes[6]} />
         <VStack ml={4}>
           <Heading fontFamily="heading" fontSize="lg" color="gray.200">
-            4
+            {productsActivesCont}
           </Heading>
           <Text fontSize="sm" color="gray.200">
             anúncios ativos

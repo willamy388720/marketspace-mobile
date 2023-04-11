@@ -18,6 +18,10 @@ import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
+import { api } from "@services/api";
+
+import { useAuth } from "@hooks/useAuth";
+
 import Logo from "@assets/Logo.png";
 import UserPhotoDefault from "@assets/userPhotoDefault.png";
 
@@ -27,7 +31,6 @@ import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 import { UserPhoto } from "@components/UserPhoto";
 import { AppError } from "@utils/AppError";
-import { api } from "@services/api";
 
 type FormDataProps = {
   name: string;
@@ -59,6 +62,8 @@ export function SignUp() {
   const [userPhotoType, setUserPhotoType] = useState();
   const [isLoadingUserPhoto, setIsLoadingUserPhoto] = useState(false);
   const [isLoadingSignUp, setIsLoadingSignUp] = useState(false);
+
+  const { signIn } = useAuth();
 
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
@@ -150,6 +155,8 @@ export function SignUp() {
           "Content-Type": "multipart/form-data",
         },
       });
+
+      await signIn(email, password);
 
       toast.show({
         title: "Conta criada com sucesso!",

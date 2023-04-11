@@ -8,8 +8,11 @@ import { TabRoutes } from "./tab.routes";
 
 type AppRoutes = {
   tab: undefined;
-  adDetails: undefined;
-  formAd: undefined;
+  adDetails: { id: string };
+  formAd: { id: string } | undefined;
+  home: undefined;
+  myAds: undefined;
+  signOut: undefined;
 };
 
 export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>;

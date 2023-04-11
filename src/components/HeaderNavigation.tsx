@@ -3,6 +3,9 @@ import { Box, Heading, HStack, useTheme } from "native-base";
 import { ArrowLeft } from "phosphor-react-native";
 
 import { useNavigation } from "@react-navigation/native";
+import { useProduct } from "@hooks/useProduct";
+import { ProductDTO } from "@dtos/ProductDTO";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 type Props = {
   goBack?: boolean;
@@ -23,10 +26,14 @@ export function HeaderNavigation({
 }: Props) {
   const { colors, sizes } = useTheme();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
+  const { setProduct, setProductPhotos } = useProduct();
 
   function handleGoBack() {
-    navigation.goBack();
+    setProduct({} as ProductDTO);
+    setProductPhotos([]);
+    navigation.navigate("home");
   }
 
   return (

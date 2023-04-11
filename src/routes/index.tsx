@@ -4,6 +4,7 @@ import { AuthRoutes } from "./auth.routes";
 import { AppRoutes } from "./app.routes";
 import { useAuth } from "@hooks/useAuth";
 import { Loading } from "@components/Loading";
+import { ProuctContextProvider } from "@contexts/ProductContext";
 
 export function Routes() {
   const { colors } = useTheme();
@@ -20,7 +21,13 @@ export function Routes() {
 
   return (
     <NavigationContainer theme={theme}>
-      {user.id ? <AppRoutes /> : <AuthRoutes />}
+      {user.id ? (
+        <ProuctContextProvider>
+          <AppRoutes />
+        </ProuctContextProvider>
+      ) : (
+        <AuthRoutes />
+      )}
     </NavigationContainer>
   );
 }
